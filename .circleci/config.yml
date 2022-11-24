@@ -88,12 +88,12 @@ jobs:
             aws configure set preview.cloudfront
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
-              aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_PROD_ID} --paths /\*
+              aws cloudfront create-invalidation --distribution-id=${DISTRIBUTION_PROD_ID} --paths /\*
             elif [ "${CIRCLE_BRANCH}" == "staging"]
             then
-              aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_STAGING_ID} --paths /\*
+              aws cloudfront create-invalidation --distribution-id=${DISTRIBUTION_STAGING_ID} --paths /\*
             else
-              aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_DEV_ID} --paths /\*
+              aws cloudfront create-invalidation --distribution-id=${DISTRIBUTION_DEV_ID} --paths /\*
             fi
 
 workflows:
