@@ -1,6 +1,127 @@
 # This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
+jobs:
+  build:
+    docker:
+      - image: circleci/node:14.19.1
+    working_directory: ~/repo
+    steps:
+      - checkout: 
+      - run:
+          name: Show current branch
+          command: echo ${CURRENT_BRANCH}
+      - restore_cache:
+          key:
+            - app-{{ checksum "package.json" }}
+            - app-
+      - run:
+          name: Install yarn
+          command: npm install
+      -save_cache:
+         paths:
+           - node_modules
+         key: app-{{ checksum "package.json"}}
+
+deploy-to-aws-s3:
+  docker:
+    - image: circleci/node:14.19.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Show current branch
+          command: echo ${CURRENT_BRANCH}
+      - run:
+        name: Installing AWS CLI
+        working_directory: /
+        command: |
+          sudo apt-get -y -qq update
+          sudo apt-get install -y awscli
+          sudo apt-get install -y python-pip python-dev build-essential
+      - run:
+          name: Build Project
+          command: |
+            npm install
+            npm run build
+            cd build
+            zip ../build.zip -r * .[^.]*
+            echo "Build successfu"
+      - run:
+          name: Deploy to AWS S3
+          command: |
+            if [ "${CURRENT_BRANCH}" == "master" ]
+            then
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PROD} --delete
+            elsif [ "${CURRENT_BRANCH}" == "staging"]
+            then
+              --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_STAGING} --delete
+            else
+              --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEV} --delete
+            if
+
+deploy-to-cloudfront:
+  docker:
+    - image: circleci/node:14.19.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Show current branch
+          command: echo ${CURRENT_BRANCH}
+      - run:
+        name: Installing AWS CLI
+        working_directory: /
+        command: |
+          sudo apt-get -y -qq update
+          sudo apt-get install -y awscli
+          sudo apt-get install -y python-pip python-dev build-essential
+      - run:
+          name: Build Project
+          command: |
+            npm install
+            npm run build
+            cd build
+            zip ../build.zip -r * .[^.]*
+            echo "Build successfu"
+      - run:
+          name: Deploy to AWS CLOUDFRONT
+          command: |
+            aws configure set preview.cloudfront
+            if [ "${CURRENT_BRANCH}" == "master" ]
+            then
+              aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_PROD_ID} --paths/\*
+            elsif [ "${CURRENT_BRANCH}" == "staging"]
+            then
+              aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_STAGING_ID} --paths/\*
+            else
+              aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_DEV_ID} --paths/\*
+            fi
+
+workflows:
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy-to-aws-s3
+          requires:
+            - build 
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - master
+      - deploy-to-aws-cloudfront
+          requires:
+            - deploy-to-aws-s3
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - master
+
+
 # Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
