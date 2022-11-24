@@ -69,9 +69,9 @@ jobs:
             then
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PROD} --delete
             elsif [ "${CIRCLE_BRANCH}" == "staging"]
-              --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_STAGING} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_STAGING} --delete
             else
-              --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEV} --delete
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEV} --delete
             fi
 
   deploy-to-aws-cloudfront:
