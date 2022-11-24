@@ -32,7 +32,7 @@ aliases:
       working_directory: /
       command: |
         sudo apt-get -y -qq update
-        sudo pip install awscli
+        sudo apt-get install -y awscli
         sudo apt-get install -y python3-pip python-dev build-essential
   - &build-project
     run:
@@ -86,6 +86,7 @@ jobs:
           name: Deploy to AWS CLOUDFRONT
           command: |
             aws configure set preview.cloudfront
+            echo ${DISTRIBUTION_DEV_ID}
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_PROD_ID} --paths /\*
