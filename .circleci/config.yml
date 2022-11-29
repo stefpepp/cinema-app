@@ -121,7 +121,7 @@ jobs:
     steps:
       - run: echo "Slack notification"
       - slack/notify:
-          event: always
+          event: "always"
           template: ''
           custom: |
             {
