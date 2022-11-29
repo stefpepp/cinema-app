@@ -1,7 +1,6 @@
 orbs:
   slack: circleci/slack@4.10.1
 version: 2.1
-
 executors:
   app-executor:
     docker:
@@ -9,7 +8,7 @@ executors:
     working_directory: ~/repo
   slack-executor:
     docker:
-      - image: 'cimg/base:stable'
+      - image: 'cibuilds/base:latest'
 
 aliases:
   - &show-current-branch-name
