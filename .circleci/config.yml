@@ -225,6 +225,7 @@ workflows:
       - notify-via-slack:
           requires:
             - deploy-to-aws-cloudfront
+          context: slack-secrets
           filters:
             branches:
               only:
