@@ -182,7 +182,6 @@ workflows:
     jobs:
       - build
       - notify-via-slack:
-          context: slack-secrets
           requires:
             - build
           filters:
