@@ -122,6 +122,7 @@ jobs:
       - run: echo "Slack notification"
       - slack/notify:
           event: "always"
+          channel: 'cinemap-app-circleci'
           template: ''
           custom: |
             {
@@ -181,9 +182,9 @@ workflows:
     jobs:
       - build
       - notify-via-slack:
+          context: slack-secrets
           requires:
             - build
-          context: slack-secrets
           filters:
             branches:
               only:
