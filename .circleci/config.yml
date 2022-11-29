@@ -10,7 +10,6 @@ executors:
   slack-executor:
     docker:
       - image: 'cimg/base:stable'
-    resource_class: small
 
 aliases:
   - &show-current-branch-name
@@ -56,9 +55,6 @@ jobs:
     steps:
       - checkout 
       - *show-current-branch-name
-      - *restore-cache
-      - *install-dependencies
-      - *save-cache
   
   linting:
     executor: app-executor
@@ -185,46 +181,9 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - linting:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - master
-      - prettier:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - master
-          
-      - deploy-to-aws-s3:
-          requires:
-            - prettier 
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - master
-      - deploy-to-aws-cloudfront:
-          requires:
-            - deploy-to-aws-s3
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - master
       - notify-via-slack:
           requires:
-            - deploy-to-aws-cloudfront
+            - build
           context: slack-secrets
           filters:
             branches:
