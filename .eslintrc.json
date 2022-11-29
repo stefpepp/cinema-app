@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "jest": true
   },
   "extends": ["plugin:react/recommended", "standard"],
   "globals": {
@@ -22,6 +23,7 @@
   },
   "plugins": ["react"],
   "rules": {
+    "react/react-in-jsx-scope": "off",
     "semi": [2, "always"],
     "space-before-function-paren": [
       0,
