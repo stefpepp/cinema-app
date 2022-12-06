@@ -28,7 +28,9 @@ aliases:
   - &install-dependencies
     run:
       name: Install dependencies
-      command: npm install
+      command: |
+        mkdir -p artifacts
+        npm install
   - &save-cache
     save_cache:
       paths:
@@ -144,7 +146,7 @@ jobs:
           name: Deploy to AWS S3
           command: |
             AWS_BUCKET_NAME=$(cat artifacts/sinema_bucket_name.txt | sed 's/\"//g')
-            echo AWS_BUCKET_NAME
+            echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
@@ -170,7 +172,7 @@ jobs:
           name: Deploy to AWS CLOUDFRONT
           command: |
             CLUDFRONT_DISTRIBUTION_ID=$(cat artifacts/sinema_bucket_name.txt | sed 's/\"//g')
-            echo CLUDFRONT_DISTRIBUTION_ID
+            echo $CLUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
@@ -249,7 +251,7 @@ jobs:
       - run:
           name: Terraform Destroy
           command: |
-            cd artifacts/infrastructure/
+            cd infrastructure/
             terraform init
             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
             terraform destroy --auto-approve
