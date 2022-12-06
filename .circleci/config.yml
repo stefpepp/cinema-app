@@ -155,8 +155,6 @@ jobs:
             else
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_NAME} --delete
             fi
-  
-
 
   deploy-to-aws-cloudfront:
     executor: app-executor
@@ -254,7 +252,7 @@ jobs:
             terraform init
             terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
             terraform destroy --auto-approve
-
+  
 workflows:
   build_and_deploy:
     jobs:
@@ -293,7 +291,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - development
                 - staging
                 - master
       - deploy-to-aws-s3:
