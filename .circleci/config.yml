@@ -318,7 +318,7 @@ workflows:
       - hold:
           type: approval
           requires:
-            - deploy-to-aws-cludfront
+            - deploy-to-aws-cloudfront
       - terraform-destory:
           requires:
             - hold
