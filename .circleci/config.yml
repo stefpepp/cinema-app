@@ -100,7 +100,7 @@ jobs:
       - run:
           name: Terraform validate and format
           command: |
-            cd artifacts/infrastructure/
+            cd infrastructure/
             terraform init -backend=false
             terraform validate
             terraform fmt -check
