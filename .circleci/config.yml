@@ -143,7 +143,7 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
-            AWS_BUCKET_NAME=$(cat artifacts/sinema_bucket_name.txt | sed 's/\"//g')
+            AWS_BUCKET_NAME=$(cat artifacts/cinema_bucket_name.txt | sed 's/\"//g')
             echo $AWS_BUCKET_NAME
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
@@ -167,7 +167,7 @@ jobs:
       - run:
           name: Deploy to AWS CLOUDFRONT
           command: |
-            CLUDFRONT_DISTRIBUTION_ID=$(cat artifacts/sinema_bucket_name.txt | sed 's/\"//g')
+            CLUDFRONT_DISTRIBUTION_ID=$(cat artifacts/cinema_bucket_name.txt | sed 's/\"//g')
             echo $CLUDFRONT_DISTRIBUTION_ID
             aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
