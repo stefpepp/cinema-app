@@ -3,5 +3,5 @@ output "cinema_app_bucket_name" {
 }
 
 output "cloudfront_distribution_id" {
-  value = aws_cloudfront_distribution.cinema_app_s3_distribution
+  value = aws_cloudfront_distribution.cinema_app_s3_distribution.id
 }
