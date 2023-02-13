@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+
+import PropTypes from 'prop-types';
+
+import { getMovies } from '../../../redux/actions/movies';
 import Grid from '../grid/Grid';
 import Paginate from '../paginate/Paginate';
 import SlideShow from '../slide-show/SlideShow';
 
 import './MainContent.scss';
+import { getImagePath } from '../../../services/movies.service';
 
-const MainContent = () => {
+const MainContent = ({ list, page, totalPages, type, typeName, getMovies }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [movies, setMovies] = useState([]);
+
   const paginate = (type) => {
     if (type === 'prev' && currentPage > 1) {
       setCurrentPage((prev) => prev - 1);
@@ -14,27 +22,55 @@ const MainContent = () => {
       setCurrentPage((prev) => prev + 1);
     }
   };
-  const images = [
-    { url: 'https://lumiere-a.akamaihd.net/v1/images/image_b3c7d632.jpeg?region=0,0,743,1100&width=480', rating: 7.5 },
-    { url: 'https://amc-theatres-res.cloudinary.com/v1668168901/amc-cdn/production/2/movies/62300/62331/Poster/Primary_BoxCover_HD_800_1200.jpg', rating: 8.5 },
-    { url: 'https://lumiere-a.akamaihd.net/v1/images/p_shangchiandthelegendofthetenringshomeentupdate_22055_7b62fa67.jpeg?region=0%2C0%2C540%2C800', rating: 9.7 },
-    { url: 'https://lumiere-a.akamaihd.net/v1/images/image_b3c7d632.jpeg?region=0,0,743,1100&width=480', rating: 7.5 },
-    { url: 'https://amc-theatres-res.cloudinary.com/v1668168901/amc-cdn/production/2/movies/62300/62331/Poster/Primary_BoxCover_HD_800_1200.jpg', rating: 6.5 },
-    { url: 'https://lumiere-a.akamaihd.net/v1/images/p_shangchiandthelegendofthetenringshomeentupdate_22055_7b62fa67.jpeg?region=0%2C0%2C540%2C800', rating: 8.5 }
-  ];
+
+  useEffect(() => {
+    list.length > 0 &&
+      setMovies(
+        list.map((el) => {
+          return { title: el.title, url: getImagePath(el.poster_path), rating: el.vote_average };
+        })
+      );
+  }, [list]);
+
+  useEffect(() => {
+    getMovies(type, currentPage);
+  }, [currentPage]);
+
   const auto = true;
+
+  const slideMovies = movies.slice(0, 6);
+
   return (
     <div className="main-content">
-      <SlideShow images={images} auto={auto} />
+      {movies.length > 0 && <SlideShow movies={slideMovies} auto={auto} />}
       <div className="grid-movie-title">
-        <div className="movieType">Now playing</div>
+        <div className="movieType">{typeName}</div>
         <div className="paginate">
-          <Paginate currentPage={currentPage} totalPages={10} paginate={paginate} />
+          <Paginate currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
       </div>
-      <Grid images={images} />
+      <Grid movies={movies} />
     </div>
   );
 };
 
-export default MainContent;
+MainContent.propTypes = {
+  list: PropTypes.array,
+  totalPages: PropTypes.number,
+  type: PropTypes.string,
+  typeName: PropTypes.string,
+  page: PropTypes.number,
+  getMovies: PropTypes.func
+};
+
+const mapStateToProps = (state) => {
+  return {
+    list: state.movies.list,
+    page: state.movies.page,
+    totalPages: state.movies.totalPages,
+    type: state.movies.type,
+    typeName: state.movies.typeName
+  };
+};
+
+export default connect(mapStateToProps, { getMovies })(MainContent);

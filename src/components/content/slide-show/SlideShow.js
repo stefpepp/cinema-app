@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 
 import './SlideShow.scss';
 
-const SlideShow = (props) => {
-  const { images } = props;
-
+const SlideShow = ({ movies }) => {
   const [state, setState] = useState({
-    slideShow: images[0],
+    slideShow: movies[0],
     slideIndex: 0
   });
 
@@ -18,19 +16,19 @@ const SlideShow = (props) => {
     let index = currentIndex;
     if (type === 'prev') {
       if (currentIndex <= 0) {
-        index = images.length - 1;
+        index = movies.length - 1;
       } else {
         index -= 1;
       }
       setCurrentIndex(index);
       setState((prev) => ({
         ...prev,
-        slideShow: images[index],
+        slideShow: movies[index],
         slideIndex: index
       }));
     }
     if (type === 'next') {
-      if (currentIndex >= images.length - 1) {
+      if (currentIndex >= movies.length - 1) {
         index = 0;
       } else {
         index += 1;
@@ -38,7 +36,7 @@ const SlideShow = (props) => {
       setCurrentIndex(index);
       setState((prev) => ({
         ...prev,
-        slideShow: images[index],
+        slideShow: movies[index],
         slideIndex: index
       }));
     }
@@ -55,7 +53,7 @@ const SlideShow = (props) => {
 
   const Indicators = (props) => {
     const { currentSlide } = props;
-    const listIndicators = images.map((slide, i) => {
+    const listIndicators = movies.map((slide, i) => {
       const btnClasses = i === currentSlide ? 'slider-navButton slider-navButton--active' : 'slider-navButton';
       return <button className={btnClasses} key={i} />;
     });
@@ -75,7 +73,7 @@ const SlideShow = (props) => {
 
   return (
     <div className="slider">
-      <div className="slider-slides">{images && images.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.url})` }}></div>}</div>
+      <div className="slider-slides">{movies && movies.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.url})` }}></div>}</div>
       <Indicators currentSlide={slideIndex} />
       <RenderArrows />
     </div>
@@ -83,7 +81,7 @@ const SlideShow = (props) => {
 };
 
 SlideShow.propTypes = {
-  images: PropTypes.array.isRequired
+  movies: PropTypes.array.isRequired
 };
 
 export default SlideShow;

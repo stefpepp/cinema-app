@@ -12,7 +12,6 @@ const Paginate = (props) => {
     setPage(currentPage);
     setTotalPageNumber(totalPages);
   }, [currentPage, totalPages]);
-  console.log('page,', page, 'curr,', currentPage, 'total,', totalPageNumber);
   return (
     <>
       <span className="pageCount">

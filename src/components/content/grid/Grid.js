@@ -2,29 +2,30 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
+import LazyImage from '../../lazy-image/LazyImage';
 import Rating from '../rating/Rating';
 
 import './Grid.scss';
 
-const Grid = ({ images }) => {
+const Grid = ({ movies }) => {
   return (
     <>
       <div className="grid">
-        {images.map((image, i) => (
+        {movies.map((movie, i) => (
           <div key={i}>
-            <div className="grid-cell" style={{ backgroundImage: `url(${image.url})` }}>
+            <LazyImage className="grid-cell" src={movie.url} alt="placeholder">
               <div className="grid-read-more">
                 <button className="grid-cell-button">Read More</button>
               </div>
               <div className="grid-detail">
-                <span className="grid-detail-title">Mission Impossible</span>
+                <span className="grid-detail-title">{movie.title}</span>
                 <div className="grid-detail-rating">
-                  <Rating rating={image.rating} totalStars={10} />
+                  <Rating rating={movie.rating} totalStars={10} />
                   &nbsp;&nbsp;
-                  <div className="grid-vote-average">{image.rating}</div>
+                  <div className="grid-vote-average">{movie.rating}</div>
                 </div>
               </div>
-            </div>
+            </LazyImage>
           </div>
         ))}
       </div>
@@ -33,7 +34,7 @@ const Grid = ({ images }) => {
 };
 
 Grid.propTypes = {
-  images: PropTypes.array
+  movies: PropTypes.array
 };
 
 export default Grid;
