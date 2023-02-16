@@ -6,8 +6,13 @@ import LazyImage from '../../lazy-image/LazyImage';
 import Rating from '../rating/Rating';
 
 import './Grid.scss';
+import { Link } from 'react-router-dom';
 
 const Grid = ({ movies }) => {
+  const formatMovieTitle = (title) => {
+    const titleStr = title.toLowerCase();
+    return titleStr.replace(/ /g, '-');
+  };
   return (
     <>
       <div className="grid">
@@ -15,7 +20,9 @@ const Grid = ({ movies }) => {
           <div key={i}>
             <LazyImage className="grid-cell" src={movie.url} alt="placeholder">
               <div className="grid-read-more">
-                <button className="grid-cell-button">Read More</button>
+                <button className="grid-cell-button">
+                  <Link to={`/${movie.id}/${formatMovieTitle(movie.title)}/details`}>Read more</Link>
+                </button>
               </div>
               <div className="grid-detail">
                 <span className="grid-detail-title">{movie.title}</span>

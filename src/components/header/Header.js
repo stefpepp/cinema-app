@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 
-import { changeMovieType, getMovies } from '../../redux/actions/movies';
+import { changeMovieType, getMovies, getSearchMoviesResult } from '../../redux/actions/movies';
 
 import logo from '../../assets/cinema-logo.svg';
 import './Header.scss';
@@ -34,13 +35,27 @@ const HEADER_LIST = [
   }
 ];
 
-const Header = ({ getMovies, changeMovieType, type, page }) => {
+const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page }) => {
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const history = useHistory();
 
   useEffect(() => {
     getMovies(type, page);
   }, [type, page]);
+
+  useEffect(() => {
+    const searchId = setTimeout(() => {
+      getSearchMoviesResult(search);
+    }, 1000);
+    return () => clearTimeout(searchId);
+  }, [search]);
+
+  const navigateToHomePage = () => {
+    history.push('/');
+  };
 
   const toggleMenu = () => {
     setMenuClass(!menuClass);
@@ -52,12 +67,16 @@ const Header = ({ getMovies, changeMovieType, type, page }) => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
   return (
     <>
       <div className="header-nav-wrapper">
         <div className="header-bar"></div>
         <div className="header-navbar">
-          <div className="header-image">
+          <div className="header-image" onClick={navigateToHomePage}>
             <img src={logo} alt=""></img>
           </div>
           <div className={`${menuClass ? 'header-menu-toggle is-actieve' : 'header-menu-toggle'}`} id="header-mobile-menu" onClick={toggleMenu}>
@@ -81,7 +100,7 @@ const Header = ({ getMovies, changeMovieType, type, page }) => {
                 <span className="header-list-name">{headerItem.name}</span>
               </li>
             ))}
-            <input className="search-input" type="text" placeholder="search for a movie"></input>
+            <input className="search-input" type="text" placeholder="search for a movie" onChange={handleSearch} value={search}></input>
           </ul>
         </div>
       </div>
@@ -91,6 +110,7 @@ const Header = ({ getMovies, changeMovieType, type, page }) => {
 
 Header.propTypes = {
   getMovies: PropTypes.func,
+  getSearchMoviesResult: PropTypes.func,
   changeMovieType: PropTypes.func,
   type: PropTypes.string,
   page: PropTypes.number
@@ -102,4 +122,4 @@ const mapStateToProps = (state) => ({
   page: state.movies.number
 });
 
-export default connect(mapStateToProps, { getMovies, changeMovieType })(Header);
+export default connect(mapStateToProps, { getMovies, changeMovieType, getSearchMoviesResult })(Header);

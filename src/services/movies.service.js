@@ -8,3 +8,8 @@ export const MOVIES_API_SERVICE = async (type, page) => {
   const response = await axios.get(`${REQUEST_URL}/movie/${type}?api_key=${API_KEY}&language=en-US&page=${page}`);
   return response;
 };
+
+export const MOVIES_SEARCH_API_SERVICE = async (query) => {
+  const response = await axios.get(`${REQUEST_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}&page=1`);
+  return response;
+};
