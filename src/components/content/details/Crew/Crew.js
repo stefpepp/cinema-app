@@ -1,8 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import { getImagePath } from '../../../../services/movies.service';
 
 import './Crew.scss';
 
-const Crew = () => {
+const Crew = ({ crew }) => {
   return (
     <>
       <div className="cast">
@@ -17,19 +20,25 @@ const Crew = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <img src="http://placehold.it/54x81" alt="" />
-              </td>
-              <td>Alan Silvestri</td>
-              <td>Sound</td>
-              <td>Original Music Composer</td>
-            </tr>
+            {crew.map((crewMember) => (
+              <tr key={crewMember.creditId}>
+                <td>
+                  <img src={getImagePath(crewMember.profile_path)} alt="crew member" />
+                </td>
+                <td>{crewMember.original_name}</td>
+                <td>{crewMember.known_for_department}</td>
+                <td>{crewMember.job}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
     </>
   );
+};
+
+Crew.propTypes = {
+  crew: PropTypes.array
 };
 
 export default Crew;

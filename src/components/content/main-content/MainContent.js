@@ -27,7 +27,7 @@ const MainContent = ({ list, page, totalPages, type, typeName, getMovies }) => {
     list.length > 0 &&
       setMovies(
         list.map((el) => {
-          return { id: el.id, title: el.title, url: getImagePath(el.poster_path), rating: el.vote_average };
+          return { id: el.id, title: el.title, backDropUrl: getImagePath(el.backdrop_path), url: getImagePath(el.poster_path), rating: el.vote_average };
         })
       );
   }, [list]);

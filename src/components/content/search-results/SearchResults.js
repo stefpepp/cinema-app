@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import { clearMovieDetails } from '../../../redux/actions/movies';
 
 import Rating from '../rating/Rating';
 import LazyImage from '../../lazy-image/LazyImage';
@@ -8,7 +11,12 @@ import './SearchResults.scss';
 import { getImagePath } from '../../../services/movies.service';
 import { Link } from 'react-router-dom';
 
-const SearchResults = ({ searchResults, searchQuery }) => {
+const SearchResults = ({ clearMovieDetails, searchResults, searchQuery, movie }) => {
+  useEffect(() => {
+    if (movie.length > 0) {
+      clearMovieDetails();
+    }
+  }, []);
   const formatMovieTitle = (title) => {
     const titleStr = title.toLowerCase();
     return titleStr.replace(/ /g, '-');
@@ -47,7 +55,13 @@ const SearchResults = ({ searchResults, searchQuery }) => {
 
 SearchResults.propTypes = {
   searchResults: PropTypes.array,
-  searchQuery: PropTypes.string
+  searchQuery: PropTypes.string,
+  clearMovieDetails: PropTypes.func,
+  movie: PropTypes.array
 };
 
-export default SearchResults;
+const mapStateToProps = (state) => ({
+  movie: state.movies.movie
+});
+
+export default connect(mapStateToProps, { clearMovieDetails })(SearchResults);

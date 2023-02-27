@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import { changeMovieType, getMovies, getSearchMoviesResult } from '../../redux/actions/movies';
 
@@ -39,8 +39,9 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
   const [search, setSearch] = useState('');
-
+  const [showSearchInput, setShowSearchInput] = useState(true);
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     getMovies(type, page);
@@ -53,8 +54,18 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
     return () => clearTimeout(searchId);
   }, [search]);
 
+  useEffect(() => {
+    setShowSearchInput(location.pathname === '/');
+  }, [location]);
+
   const navigateToHomePage = () => {
     history.push('/');
+  };
+
+  const toggleMovieType = (type, name) => {
+    setSearch('');
+    changeMovieType(type, name);
+    navigateToHomePage();
   };
 
   const toggleMenu = () => {
@@ -90,7 +101,7 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
                 key={headerItem.id}
                 className={`header-nav-item ${headerItem.type === type ? 'active-item' : ''}`}
                 onClick={() => {
-                  changeMovieType(headerItem.type, headerItem.name);
+                  toggleMovieType(headerItem.type, headerItem.name);
                 }}
               >
                 <span className="header-list-name">
@@ -100,7 +111,7 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
                 <span className="header-list-name">{headerItem.name}</span>
               </li>
             ))}
-            <input className="search-input" type="text" placeholder="search for a movie" onChange={handleSearch} value={search}></input>
+            {showSearchInput && <input className="search-input" type="text" placeholder="search for a movie" onChange={handleSearch} value={search}></input>}
           </ul>
         </div>
       </div>
