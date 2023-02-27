@@ -73,7 +73,7 @@ const SlideShow = ({ movies }) => {
 
   return (
     <div className="slider">
-      <div className="slider-slides">{movies && movies.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.url})` }}></div>}</div>
+      <div className="slider-slides">{movies && movies.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.backDropUrl})` }}></div>}</div>
       <Indicators currentSlide={slideIndex} />
       <RenderArrows />
     </div>

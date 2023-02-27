@@ -1,19 +1,28 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './Reviews.scss';
 
-const Reviews = () => {
+const Reviews = ({ reviews }) => {
   return (
     <>
       <div className="movie-reviews">
-        <div className="div-title">Reviews 20</div>
+        <div className="div-title">Reviews ({reviews.length})</div>
         <div className="reviews">
-          <h3>anonymous</h3>
-          <div>This was an awesome movie. I loved every bit of it.</div>
+          {reviews.map((review) => (
+            <>
+              <h3>{review.author}</h3>
+              <div className="review-content">{review.content}</div>
+            </>
+          ))}
         </div>
       </div>
     </>
   );
+};
+
+Reviews.propTypes = {
+  reviews: PropTypes.array
 };
 
 export default Reviews;
