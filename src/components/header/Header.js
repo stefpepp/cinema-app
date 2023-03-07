@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, useRouteMatch } from 'react-router-dom';
 
 import { changeMovieType, getMovies, getSearchMoviesResult } from '../../redux/actions/movies';
 
@@ -40,6 +40,8 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
   const [menuClass, setMenuClass] = useState(false);
   const [search, setSearch] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(true);
+  const [showHeader, setShowHeader] = useState(true);
+  const urlPath = useRouteMatch('/:id/:name/details');
   const history = useHistory();
   const location = useLocation();
 
@@ -56,6 +58,9 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
 
   useEffect(() => {
     setShowSearchInput(location.pathname === '/');
+    if (!urlPath && location.pathname !== '/') {
+      setShowHeader(false);
+    }
   }, [location]);
 
   const navigateToHomePage = () => {
@@ -84,37 +89,39 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
 
   return (
     <>
-      <div className="header-nav-wrapper">
-        <div className="header-bar"></div>
-        <div className="header-navbar">
-          <div className="header-image" onClick={navigateToHomePage}>
-            <img src={logo} alt=""></img>
+      {showHeader && (
+        <div className="header-nav-wrapper">
+          <div className="header-bar"></div>
+          <div className="header-navbar">
+            <div className="header-image" onClick={navigateToHomePage}>
+              <img src={logo} alt=""></img>
+            </div>
+            <div className={`${menuClass ? 'header-menu-toggle is-actieve' : 'header-menu-toggle'}`} id="header-mobile-menu" onClick={toggleMenu}>
+              <span className="bar"></span>
+              <span className="bar"></span>
+              <span className="bar"></span>
+            </div>
+            <ul className={`${navClass ? 'header-nav header-mobile-nav' : 'header-nav'}`}>
+              {HEADER_LIST.map((headerItem) => (
+                <li
+                  key={headerItem.id}
+                  className={`header-nav-item ${headerItem.type === type ? 'active-item' : ''}`}
+                  onClick={() => {
+                    toggleMovieType(headerItem.type, headerItem.name);
+                  }}
+                >
+                  <span className="header-list-name">
+                    <i className={headerItem.iconClass}></i>
+                  </span>
+                  &nbsp;
+                  <span className="header-list-name">{headerItem.name}</span>
+                </li>
+              ))}
+              {showSearchInput && <input className="search-input" type="text" placeholder="search for a movie" onChange={handleSearch} value={search}></input>}
+            </ul>
           </div>
-          <div className={`${menuClass ? 'header-menu-toggle is-actieve' : 'header-menu-toggle'}`} id="header-mobile-menu" onClick={toggleMenu}>
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
-          </div>
-          <ul className={`${navClass ? 'header-nav header-mobile-nav' : 'header-nav'}`}>
-            {HEADER_LIST.map((headerItem) => (
-              <li
-                key={headerItem.id}
-                className={`header-nav-item ${headerItem.type === type ? 'active-item' : ''}`}
-                onClick={() => {
-                  toggleMovieType(headerItem.type, headerItem.name);
-                }}
-              >
-                <span className="header-list-name">
-                  <i className={headerItem.iconClass}></i>
-                </span>
-                &nbsp;
-                <span className="header-list-name">{headerItem.name}</span>
-              </li>
-            ))}
-            {showSearchInput && <input className="search-input" type="text" placeholder="search for a movie" onChange={handleSearch} value={search}></input>}
-          </ul>
         </div>
-      </div>
+      )}
     </>
   );
 };
