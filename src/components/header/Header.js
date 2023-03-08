@@ -60,6 +60,8 @@ const Header = ({ getMovies, getSearchMoviesResult, changeMovieType, type, page 
     setShowSearchInput(location.pathname === '/');
     if (!urlPath && location.pathname !== '/') {
       setShowHeader(false);
+    } else {
+      setShowHeader(true);
     }
   }, [location]);
 
